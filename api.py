@@ -87,4 +87,12 @@ def predict(input_data: ModelInput):
 
     # Combine results for output
     try:
-        input_selected = input
+        input_selected = input_df[['BMI', 'Alcohol_Consumption_Frequency', 'Smoking_Frequency']]
+        predicted_data_df = pd.DataFrame(predicted_data, columns=['Predicted_Age'])
+        severity_df = pd.DataFrame(severity_results)
+        combined_results = pd.concat([input_selected, predicted_data_df, severity_df], axis=1)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error combining results: {e}")
+
+    # Return combined results as JSON
+    return combined_results.to_dict(orient="records")
